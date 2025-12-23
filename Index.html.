@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mystic Tarot - Oracle Pro</title>
+    <style>
+        :root { --gold: #c5a059; --blue: #0f0c29; --text: #f5f5f5; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--blue); color: var(--text); font-family: serif; margin: 0; padding: 15px; text-align: center; }
+        .header { padding: 10px 0; }
+        #moon { color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; display: inline-block; margin-bottom: 15px; }
+        .btn-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 20px; }
+        .action-btn { background: var(--gold); color: var(--blue); border: none; padding: 12px; border-radius: 25px; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; flex: 1 1 30%; min-width: 100px; }
+        #search { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid var(--gold); background: rgba(255,255,255,0.05); color: white; margin-bottom: 20px; outline: none; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+        .tarot-card { background: rgba(0,0,0,0.3); border: 1px solid var(--gold); border-radius: 8px; padding: 5px; cursor: pointer; }
+        .tarot-card img { width: 100%; border-radius: 5px; }
+        .rev { transform: rotate(180deg); }
+        .summary-box { grid-column: 1 / -1; background: rgba(255,255,255,0.05); border: 1px solid var(--gold); padding: 20px; border-radius: 15px; margin-top: 25px; text-align: left; line-height: 1.6; }
+        .insight-step { border-left: 2px solid var(--gold); padding-left: 15px; margin-bottom: 15px; }
+        .step-label { color: var(--gold); font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); overflow-y: auto; }
+        .modal-content { background: var(--blue); margin: 15% auto; padding: 20px; border: 1px solid var(--gold); width: 90%; max-width: 400px; border-radius: 15px; position: relative; }
+        .close { float: right; color: var(--gold); font-size: 28px; cursor: pointer; }
+        .share-btn { background: #1da1f2; color: white; border: none; padding: 12px; border-radius: 25px; width: 100%; font-weight: bold; margin-top: 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div id="moon">🌑 Calculating Moon...</div>
+    <h1 style="color:var(--gold); letter-spacing: 2px;">MYSTIC READER</h1>
+    <div class="btn-container">
+        <button class="action-btn" onclick="draw(1)">Daily</button>
+        <button class="action-btn" onclick="draw(3)">3-Card</button>
+        <button class="action-btn" onclick="draw(5)">5-Card</button>
+    </div>
+    <input type="text" id="search" placeholder="Search the 78 cards..." onkeyup="filter()">
+</div>
+
+<div class="card-grid" id="grid"></div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeM()">&times;</span>
+        <img id="mImg" src="" style="width:120px; border-radius:5px; border:1px solid var(--gold);">
+        <h2 id="mTitle" style="color:var(--gold); margin: 10px 0;"></h2>
+        <p id="mDesc" style="font-style:italic; font-size: 1.1rem; padding: 10px;"></p>
+        <textarea id="note" style="width:100%; height:60px; background:rgba(0,0,0,0.3); color:white; border:1px solid var(--gold); border-radius:5px; padding:5px; font-size: 16px;" placeholder="Personal reflection..." onkeyup="saveNote()"></textarea>
+    </div>
+</div>
+
+<script>
+const cards = [
+    { n: "The Fool", img: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", g: "New beginnings, optimism, and trust.", r: "Recklessness and risk." },
+    { n: "The Magician", img: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", g: "Manifestation, resourcefulness, power.", r: "Manipulation, poor planning." },
+    { n: "The High Priestess", img: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg", g: "Intuition, sacred knowledge, subconscious.", r: "Secrets, disconnected from intuition." },
+    { n: "The Empress", img: "https://upload.wikimedia.org/wikipedia/commons/a/af/RWS_Tarot_03_Empress.jpg", g: "Femininity, beauty, nature, abundance.", r: "Creative block, dependence on others." },
+    { n: "The Emperor", img: "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg", g: "Authority, structure, a father figure.", r: "Tyranny, rigidity, coldness." },
+    { n: "The Hierophant", img: "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg", g: "Spiritual wisdom, religious beliefs, tradition.", r: "Personal beliefs, rebellion." },
+    { n: "The Lovers", img: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg", g: "Love, harmony, relationships, choices.", r: "Self-love, disharmony, imbalance." },
+    { n: "The Chariot", img: "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg", g: "Control, willpower, success, determination.", r: "Self-discipline, opposition, lack of direction." },
+    { n: "Strength", img: "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg", g: "Strength, courage, persuasion, influence.", r: "Inner strength, self-doubt, raw emotion." },
+    { n: "The Hermit", img: "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg", g: "Soul-searching, introspection, solitude.", r: "Isolation, loneliness, withdrawal." },
+    { n: "Wheel of Fortune", img: "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg", g: "Good luck, karma, life cycles, a turning point.", r: "Bad luck, resistance to change." },
+    { n: "Justice", img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg", g: "Justice, fairness, truth, the law.", r: "Unfairness, lack of accountability." },
+    { n: "The Hanged Man", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg", g: "Pause, surrender, letting go, new perspectives.", r: "Delays, resistance, stalling." },
+    { n: "Death", img: "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg", g: "Endings, change, transformation, transition.", r: "Resistance to change, personal purging." },
+    { n: "Temperance", img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg", g: "Balance, moderation, patience, purpose.", r: "Imbalance, excess, lack of long-term vision." },
+    { n: "The Devil", img: "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg", g: "Shadow self, attachment, addiction, restriction.", r: "Releasing limiting beliefs, exploring dark thoughts." },
+    { n: "The Tower", img: "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg", g: "Sudden change, upheaval, chaos, revelation.", r: "Personal transformation, averting disaster." },
+    { n: "The Star", img: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg", g: "Hope, faith, purpose, renewal, spirituality.", r: "Lack of faith, despair, self-trust." },
+    { n: "The Moon", img: "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg", g: "Illusion, fear, anxiety, subconscious, intuition.", r: "Release of fear, repressed emotion, confusion." },
+    { n: "The Sun", img: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg", g: "Positivity, fun, warmth, success, vitality.", r: "Inner child, feeling down, overly optimistic." },
+    { n: "Judgement", img: "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg", g: "Judgement, rebirth, inner calling, absolution.", r: "Self-doubt, inner critic, ignoring the call." },
+    { n: "The World", img: "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg", g: "Completion, integration, accomplishment, travel.", r: "Seeking closure, shortcuts, delays." },
+    { n: "Ace of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/1/11/Wands01.jpg", g: "Inspiration, new opportunities.", r: "Emerging idea, delays." },
+    { n: "Two of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/0/0f/Wands02.jpg", g: "Future planning, progress.", r: "Fear of unknown." },
+    { n: "Three of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/f/ff/Wands03.jpg", g: "Expansion, foresight.", r: "Playing it safe." },
+    { n: "Four of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Wands04.jpg", g: "Celebration, joy, harmony.", r: "Personal celebration." },
+    { n: "Five of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Wands05.jpg", g: "Conflict, competition.", r: "Inner conflict, tension." },
+    { n: "Six of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Wands06.jpg", g: "Success, public recognition.", r: "Private achievement." },
+    { n: "Seven of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Wands07.jpg", g: "Challenge, competition, grit.", r: "Exhaustion, giving up." },
+    { n: "Eight of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Wands08.jpg", g: "Movement, fast paced change.", r: "Waiting, slowing down." },
+    { n: "Nine of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/4/4d/Wands09.jpg", g: "Resilience, persistence.", r: "Struggling, burnout." },
+    { n: "Ten of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Wands10.jpg", g: "Burden, extra responsibility.", r: "Doing it all, breakdown." },
+    { n: "Page of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Wands11.jpg", g: "Inspiration, ideas, discovery.", r: "Newly formed ideas." },
+    { n: "Knight of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/1/16/Wands12.jpg", g: "Energy, passion, adventure.", r: "Rash, impulsive, restless." },
+    { n: "Queen of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Wands13.jpg", g: "Courage, confidence, social.", r: "Self-respect, introverted." },
+    { n: "King of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Wands14.jpg", g: "Natural leader, vision.", r: "Impulsive, high expectations." },
+    { n: "Ace of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/3/36/Cups01.jpg", g: "Love, new feelings, intuition.", r: "Self-love, intuition, repressed emotions." },
+    { n: "Two of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Cups02.jpg", g: "Unified love, partnership.", r: "Self-love, disharmony." },
+    { n: "Three of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Cups03.jpg", g: "Celebration, friendship, creativity.", r: "Independence, alone time." },
+    { n: "Four of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/3/35/Cups04.jpg", g: "Apathy, contemplation, disconnected.", r: "Choosing to move on." },
+    { n: "Five of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Cups05.jpg", g: "Regret, failure, disappointment.", r: "Self-forgiveness, moving on." },
+    { n: "Six of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/1/17/Cups06.jpg", g: "Nostalgia, childhood, joy.", r: "Living in the past, stuck." },
+    { n: "Seven of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/a/af/Cups07.jpg", g: "Searching for purpose, choices.", r: "Alignment, choice, overwhelmed." },
+    { n: "Eight of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Cups08.jpg", g: "Disillusionment, walking away.", r: "Trying one last time." },
+    { n: "Nine of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/2/24/Cups09.jpg", g: "Contentment, satisfaction, wishes.", r: "Inner happiness, materialism." },
+    { n: "Ten of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/d/dc/Cups10.jpg", g: "Divine love, blissful relationships.", r: "Disconnected, struggling relationships." },
+    { n: "Page of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Cups11.jpg", g: "Creative opportunity, intuition.", r: "New ideas, doubting intuition." },
+    { n: "Knight of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Cups12.jpg", g: "Creativity, romance, charm.", r: "Overactive imagination, moody." },
+    { n: "Queen of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/6/62/Cups13.jpg", g: "Compassionate, caring, emotional.", r: "Self-care, co-dependency." },
+    { n: "King of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/0/04/Cups14.jpg", g: "Emotionally balanced, compassionate.", r: "Self-compassion, moody." },
+    { n: "Ace of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Swords01.jpg", g: "Breakthroughs, new ideas, clarity.", r: "Inner clarity, re-thinking." },
+    { n: "Two of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Swords02.jpg", g: "Difficult choices, stalemate.", r: "Indecision, confusion, information." },
+    { n: "Three of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/0/02/Swords03.jpg", g: "Heartbreak, emotional pain, sorrow.", r: "Negative self-talk, releasing pain." },
+    { n: "Four of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Swords04.jpg", g: "Rest, relaxation, meditation, sanctuary.", r: "Exhaustion, burnout, stagnation." },
+    { n: "Five of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/2/23/Swords05.jpg", g: "Conflict, disagreements, competition.", r: "Reconciliation, making amends." },
+    { n: "Six of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/2/29/Swords06.jpg", g: "Transition, change, rite of passage.", r: "Emotional baggage, personal transition." },
+    { n: "Seven of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/3/34/Swords07.jpg", g: "Betrayal, deception, getting away with it.", r: "Confession, conscience, imposter." },
+    { n: "Eight of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/a/a7/Swords08.jpg", g: "Negative thoughts, self-imposed prison.", r: "Self-belief, release, new perspective." },
+    { n: "Nine of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Swords09.jpg", g: "Anxiety, worry, fear, nightmares.", r: "Inner turmoil, secrets, releasing." },
+    { n: "Ten of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords10.jpg", g: "Deep wounds, betrayal, loss, crisis.", r: "Recovery, regeneration, resisting." },
+    { n: "Page of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Swords11.jpg", g: "Curiosity, mental energy, restless.", r: "All talk, no action, hasty, cynical." },
+    { n: "Knight of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/b/b0/Swords12.jpg", g: "Ambitious, action-oriented, driven.", r: "Restless, unfocused, impulsive." },
+    { n: "Queen of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords13.jpg", g: "Independent, unbiased, direct.", r: "Overly-emotional, bitchy, cold." },
+    { n: "King of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/3/33/Swords14.jpg", g: "Mental clarity, authority, truth.", r: "Quiet power, inner truth, manipulative." },
+    { n: "Ace of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/f/fd/Pents01.jpg", g: "A new financial opportunity, wealth.", r: "Lost opportunity, lack of planning." },
+    { n: "Two of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Pents02.jpg", g: "Multiple priorities, time management.", r: "Over-committed, disorganized." },
+    { n: "Three of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/4/42/Pents03.jpg", g: "Teamwork, collaboration, learning.", r: "Disharmony, working alone." },
+    { n: "Four of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/3/35/Pents04.jpg", g: "Saving money, security, control.", r: "Over-spending, greed, self-protection." },
+    { n: "Five of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/9/96/Pents05.jpg", g: "Financial loss, poverty, isolation.", r: "Recovery from loss, spiritual poverty." },
+    { n: "Six of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Pents06.jpg", g: "Giving, receiving, sharing wealth.", r: "Self-care, unpaid debts, stingy." },
+    { n: "Seven of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Pents07.jpg", g: "Long-term view, sustainable results.", r: "Short-term effort, limited reward." },
+    { n: "Eight of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/4/49/Pents08.jpg", g: "Apprenticeship, repetitive effort, mastery.", r: "Self-perfection, perfectionism, busywork." },
+    { n: "Nine of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Pents09.jpg", g: "Abundance, luxury, self-sufficiency.", r: "Self-worth, over-investment." },
+    { n: "Ten of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/3/39/Pents10.jpg", g: "Wealth, financial security, family.", r: "Financial failure, loss, transition." },
+    { n: "Page of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Pents11.jpg", g: "Manifestation, financial opportunity.", r: "Newly formed ideas, procrastination." },
+    { n: "Knight of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Pents12.jpg", g: "Hard work, productivity, routine.", r: "Self-discipline, boredom, feeling stuck." },
+    { n: "Queen of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/8/88/Pents13.jpg", g: "Nurturing, practical, providing.", r: "Self-care, work-life balance." },
+    { n: "King of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/1/1c/Pents14.jpg", g: "Wealth, business, leadership, abundance.", r: "Financially inept, obsessive, stubborn." }
+];
+
+let lastLog = "";
+
+function moon() {
+    const p = ["🌑 New", "🌒 Waxing", "🌓 First", "🌔 Gibbous", "🌕 Full", "🌖 Waning", "🌗 Last", "🌘 Crescent"];
+    document.getElementById('moon').innerText = p[new Date().getDate() % 8] + " Moon Guidance";
+}
+moon();
+
+function render(list) {
+    document.getElementById('grid').innerHTML = list.map(c => `
+        <div class="tarot-card" onclick="openM('${c.n.replace(/'/g, "\\'")}')">
+            <img src="${c.img}" loading="lazy">
+            <h3 style="font-size:0.75rem; margin:5px 0;">${c.n}</h3>
+        </div>
+    `).join('');
+}
+
+function openM(name, rev = false) {
+    const card = cards.find(c => c.n === name);
+    document.getElementById('mImg').src = card.img;
+    document.getElementById('mImg').className = rev ? 'rev' : '';
+    document.getElementById('mTitle').innerText = name + (rev ? " (Rev)" : "");
+    document.getElementById('mDesc').innerText = rev ? card.r : card.g;
+    document.getElementById('modal').style.display = 'block';
+    document.getElementById('note').value = localStorage.getItem('nt_'+name) || "";
+}
+
+function saveNote() {
+    const name = document.getElementById('mTitle').innerText.replace(" (Rev)", "");
+    localStorage.setItem('nt_'+name, document.getElementById('note').value);
+}
+
+function closeM() { document.getElementById('modal').style.display = 'none'; }
+
+function draw(num) {
+    const shuffled = [...cards].sort(() => 0.5 - Math.random());
+    const picked = shuffled.slice(0, num);
+    const labels = ["Past", "Present", "Future", "Root", "Outcome"];
+    let body = "";
+    
+    document.getElementById('grid').innerHTML = `<div style="grid-column:1/-1;"><button class="action-btn" onclick="render(cards)">View Library</button></div>`;
+    
+    picke
