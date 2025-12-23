@@ -3,185 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mystic Oracle</title>
+    <title>The Deep Oracle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #c5a059; --blue: #0f0c29; --text: #f5f5f5; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-        body { background: var(--blue); color: var(--text); font-family: serif; margin: 0; padding: 15px; text-align: center; }
-        #moon { color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; display: inline-block; margin-bottom: 15px; }
-        .btn-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 20px; }
-        .action-btn { background: var(--gold); color: var(--blue); border: none; padding: 12px; border-radius: 25px; font-weight: bold; text-transform: uppercase; font-size: 0.7rem; min-width: 90px; cursor: pointer; }
-        #search { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid var(--gold); background: rgba(255,255,255,0.1); color: white; margin-bottom: 20px; outline: none; }
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; }
-        .tarot-card { background: rgba(0,0,0,0.3); border: 1px solid var(--gold); border-radius: 8px; padding: 5px; cursor: pointer; }
-        .tarot-card img { width: 100%; border-radius: 5px; min-height: 140px; background: #000; }
+        body { background: var(--blue); color: var(--text); font-family: 'Cormorant Garamond', serif; margin: 0; padding: 15px; text-align: center; line-height: 1.6; }
+        #moon { color: var(--gold); border: 1px solid var(--gold); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; display: inline-block; margin-bottom: 15px; text-transform: uppercase; }
+        h1 { color: var(--gold); letter-spacing: 4px; font-size: 1.8rem; margin: 10px 0; }
+        .btn-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 25px; }
+        .action-btn { background: var(--gold); color: var(--blue); border: none; padding: 12px; border-radius: 25px; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; flex: 1 1 30%; min-width: 100px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        #search { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid var(--gold); background: rgba(255,255,255,0.05); color: white; margin-bottom: 25px; outline: none; font-size: 1rem; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+        .tarot-card { background: rgba(0,0,0,0.3); border: 1px solid var(--gold); border-radius: 8px; padding: 6px; cursor: pointer; transition: 0.3s; }
+        .tarot-card img { width: 100%; border-radius: 5px; min-height: 150px; background: #000; }
         .rev { transform: rotate(180deg); }
-        .summary-box { grid-column: 1 / -1; background: rgba(255,255,255,0.05); border: 1px solid var(--gold); padding: 20px; border-radius: 15px; margin-top: 25px; text-align: left; }
-        .insight-step { border-left: 2px solid var(--gold); padding-left: 15px; margin-bottom: 15px; }
+        .summary-box { grid-column: 1 / -1; background: rgba(255,255,255,0.03); border: 1px solid var(--gold); padding: 25px; border-radius: 15px; margin-top: 30px; text-align: left; }
+        .insight-step { border-left: 2px solid var(--gold); padding-left: 15px; margin-bottom: 25px; }
+        .step-label { color: var(--gold); font-weight: bold; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); overflow-y: auto; }
-        .modal-content { background: var(--blue); margin: 15% auto; padding: 20px; border: 1px solid var(--gold); width: 90%; max-width: 380px; border-radius: 15px; position: relative; }
+        .modal-content { background: var(--blue); margin: 10% auto; padding: 25px; border: 1px solid var(--gold); width: 90%; max-width: 400px; border-radius: 15px; position: relative; }
+        .close { float: right; color: var(--gold); font-size: 32px; cursor: pointer; line-height: 20px; }
     </style>
 </head>
 <body>
-    <div id="moon">🌙 Checking Moon...</div>
-    <h1 style="color:var(--gold); letter-spacing: 2px;">MYSTIC ORACLE</h1>
+
+    <div id="moon">✨ Aligning with the Void...</div>
+    <h1>MYSTIC ORACLE</h1>
+
     <div class="btn-container">
-        <button class="action-btn" onclick="draw(1)">Daily</button>
-        <button class="action-btn" onclick="draw(3)">3-Card</button>
-        <button class="action-btn" onclick="draw(5)">5-Card</button>
+        <button class="action-btn" onclick="draw(1)">Daily Draw</button>
+        <button class="action-btn" onclick="draw(3)">3-Card Path</button>
+        <button class="action-btn" onclick="draw(5)">5-Card Soul</button>
     </div>
-    <input type="text" id="search" placeholder="Search the deck..." onkeyup="filter()">
+
+    <input type="text" id="search" placeholder="Search the 78 cards..." onkeyup="filter()">
     <div class="card-grid" id="grid"></div>
+
     <div id="modal" class="modal">
         <div class="modal-content">
-            <span style="float:right; cursor:pointer; color:var(--gold); font-size:30px;" onclick="closeM()">&times;</span>
-            <img id="mImg" src="" style="width:120px; border-radius:5px; border:1px solid var(--gold);">
+            <span class="close" onclick="closeM()">&times;</span>
+            <img id="mImg" src="" style="width:140px; border-radius:8px; border:1px solid var(--gold); margin-bottom:15px;">
             <h2 id="mTitle" style="color:var(--gold); margin:10px 0;"></h2>
-            <p id="mDesc" style="font-style:italic; font-size: 1.1rem;"></p>
+            <p id="mDesc" style="font-style:italic; font-size: 1.1rem; color: #ccc;"></p>
         </div>
     </div>
+
 <script>
 const cards = [
-    { n: "The Fool", img: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", g: "New journey begins; trust the universe and take a leap into the unknown.", r: "Wary of recklessness; lack of preparation may lead to a mistake." },
-    { n: "The Magician", img: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", g: "You possess all tools needed to manifest desires; take inspired action now.", r: "Your power is being misused; clarify intentions before moving forward." },
-    { n: "The High Priestess", img: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg", g: "Sit in silence; your intuition holds the secret answers you seek.", r: "Ignoring your inner voice; stop looking for external validation." },
-    { n: "The Empress", img: "https://upload.wikimedia.org/wikipedia/commons/a/af/RWS_Tarot_03_Empress.jpg", g: "Abundance and creativity surround you; nurture your dreams and watch them grow.", r: "Creative drought; reconnect with nature to replenish your spirit." },
-    { n: "The Emperor", img: "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg", g: "Structure required; lead with logic and establish firm boundaries.", r: "Authority too rigid; avoid being overly controlling toward others." },
-    { n: "The Hierophant", img: "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg", g: "Seek wisdom in tradition; following the established path provides safety.", r: "Break free from tradition; it is time to challenge the status quo." },
-    { n: "The Lovers", img: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg", g: "Harmony and soul-aligning choices; follow your heart toward a deep union.", r: "Values out of alignment; resolve conflict before fixing relationships." },
-    { n: "The Chariot", img: "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg", g: "Victory through willpower; stay focused and drive toward your goal.", r: "Losing control; pull back and realign your sense of direction." },
-    { n: "Strength", img: "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg", g: "Power lies in gentleness; tame your inner beast with patience.", r: "Self-doubt is draining; find the inner resolve to continue." },
-    { n: "The Hermit", img: "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg", g: "Step back from noise; solitude reveals inner light and guidance.", r: "Isolation is a cage; do not hide from the world out of fear." },
-    { n: "Wheel of Fortune", img: "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg", g: "Cycles turning in your favor; embrace the destiny and change.", r: "Luck feels out of reach; accept the ebb and flow of fate." },
-    { n: "Justice", img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg", g: "Truth will prevail; ensure your actions align with highest integrity.", r: "Injustice is occurring; take accountability and seek honesty." },
-    { n: "The Hanged Man", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg", g: "Surrender to the pause; a shift in perspective is valuable.", r: "Stalling for no reason; stop waiting and make a choice." },
-    { n: "Death", img: "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg", g: "A cycle is ending to make room for a necessary new beginning.", r: "Clinging to a dead situation; let go so transformation begins." },
-    { n: "Temperance", img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg", g: "Balance leads to peace; blend opposing forces for a harmonious life.", r: "Excess creating disharmony; find middle ground to regain peace." },
-    { n: "The Devil", img: "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg", g: "Beware of unhealthy attachments; you can break the chains.", r: "Release from toxic patterns is within reach; choose freedom." },
-    { n: "The Tower", img: "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg", g: "Upheaval clears false foundations; embrace chaos for breakthrough.", r: "Disaster avoided; use this warning to change your course now." },
-    { n: "The Star", img: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg", g: "Hope and healing are returning; trust the universe guides you.", r: "Disconnected from hope; look for silver lining in the dark." },
-    { n: "The Moon", img: "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg", g: "Things are not as they seem; trust intuition to guide you.", r: "Confusion lifting; truth is emerging from darkness of fears." },
-    { n: "The Sun", img: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg", g: "Radiant joy and success are yours; bask in the light of vitality.", r: "Joy is clouded; find what is blocking light and clear it." },
-    { n: "Judgement", img: "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg", g: "Higher calling heard; forgive the past and step into your life.", r: "Too self-critical; stop judging and accept grace offered." },
-    { n: "The World", img: "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg", g: "Cycle complete; celebrate achievements and prepare for new journeys.", r: "Seeking closure; tie up loose ends to move forward freely." },
-    { n: "Ace of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/1/11/Wands01.jpg", g: "Spark of fire; a passionate new opportunity is presenting itself.", r: "Idea failing to launch; find the fuel to restart." },
-    { n: "Two of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/0/0f/Wands02.jpg", g: "Planning and progress; stepping out of your comfort zone now.", r: "Fear of unknown holding you back; commit to your vision." },
-    { n: "Three of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/f/ff/Wands03.jpg", g: "Foresight; your ships are coming in and rewards are visible.", r: "Playing it too safe; stop waiting and start next phase." },
-    { n: "Four of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Wands04.jpg", g: "Joy; your hard work earned you a stable foundation.", r: "Tension at home; find common ground through honest celebration." },
-    { n: "Five of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Wands05.jpg", g: "Competition; use friction to sharpen your skills and resolve.", r: "Avoiding conflict is causing tension; address the energy now." },
-    { n: "Six of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Wands06.jpg", g: "Victory; your efforts are being recognized by those around.", r: "Private achievement; don't let lack of praise dim success." },
-    { n: "Seven of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Wands07.jpg", g: "Grit; hold your ground against the challenges coming your way.", r: "Exhaustion; do not give up just as the summit is near." },
-    { n: "Eight of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Wands08.jpg", g: "Sudden speed; news arriving quickly and everything is moving.", r: "Chaos; slow down before the momentum causes a crash." },
-    { n: "Nine of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/4/4d/Wands09.jpg", g: "Resilience; stay strong as you finish this long cycle.", r: "Burnout; you are struggling to keep the guard up longer." },
-    { n: "Ten of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Wands10.jpg", g: "Heavy burden; you are carrying a massive load nearing completion.", r: "Collapse imminent; delegate tasks before the weight breaks spirit." },
-    { n: "Page of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Wands11.jpg", g: "Inspiration; follow the spark of a fresh creative idea.", r: "Idea lacks direction; don't let excitement lead to distraction." },
-    { n: "Knight of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/1/16/Wands12.jpg", g: "Action; chase passions with fearless energy and bold moves.", r: "Impulsive; slow down before restless energy causes a mistake." },
-    { n: "Queen of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Wands13.jpg", g: "Confidence; lead with magnetic personality and warm heart.", r: "Self-respect needed; stop seeking attention and find fire." },
-    { n: "King of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Wands14.jpg", g: "Leadership; inspire others through bold actions and authority.", r: "Overbearing; avoid being a tyrant in pursuit of success." },
-    { n: "Ace of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/3/36/Cups01.jpg", g: "Love; open heart to a beautiful new emotional beginning.", r: "Blocked; learn to love yourself before the cup can overflow." },
-    { n: "Two of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Cups02.jpg", g: "Bonds; a unified connection brings deep harmony to life.", r: "Disharmony; self-love required to heal the external rift." },
-    { n: "Three of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Cups03.jpg", g: "Friendship; gather with community to share joy and spirit.", r: "Isolation; find balance between social life and solitude." },
-    { n: "Four of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/3/35/Cups04.jpg", g: "Apathy; don't ignore the new offers being presented now.", r: "Moving on from boredom; you are finally waking up again." },
-    { n: "Five of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Cups05.jpg", g: "Regret; look behind you at the cups still standing now.", r: "Self-forgiveness; finally letting go of old, heavy sorrows." },
-    { n: "Six of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/1/17/Cups06.jpg", g: "Nostalgia; reconnect with simple innocence of your past.", r: "Stuck in past; live for the future rather than memories." },
-    { n: "Seven of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/a/af/Cups07.jpg", g: "Choices; evaluate options carefully before committing to dream.", r: "Clarity returning; fog of indecision clearing from vision." },
-    { n: "Eight of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Cups08.jpg", g: "Walking away; leaving behind what no longer serves soul.", r: "Stuck; you are afraid to leave the comfort of misery." },
-    { n: "Nine of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/2/24/Cups09.jpg", g: "Bliss; wishes are granted through deep inner contentment.", r: "Greed; ensure success is fulfilling heart, not just ego." },
-    { n: "Ten of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/d/dc/Cups10.jpg", g: "Divine love; home and family life reaching peak harmony.", r: "Disconnected; heal rift in domestic life through compassion." },
-    { n: "Page of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Cups11.jpg", g: "Creative news; a message arriving to touch your heart.", r: "Doubting intuition; don't let insecurity block the message." },
-    { n: "Knight of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Cups12.jpg", g: "Charm; a dreamer arrives with a poetic invitation for you.", r: "Moody; stay grounded so moods don't wash away progress." },
-    { n: "Queen of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/6/62/Cups13.jpg", g: "Compassion; nurture yourself and others with kind spirit.", r: "Insecurity; take time to fill own cup before helping others." },
-    { n: "King of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/0/04/Cups14.jpg", g: "Balanced; lead with compassion and keep heart steady.", r: "Manipulative; do not use your emotions to control others." },
-    { n: "Ace of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Swords01.jpg", g: "Mental clarity; a sharp new idea cuts through the fog.", r: "Chaos; your thoughts are too scattered to see the truth." },
-    { n: "Two of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Swords02.jpg", g: "Stalemate; you must weigh options with total, cold logic.", r: "Indecision; you have information, now you must choose." },
-    { n: "Three of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/0/02/Swords03.jpg", g: "Heartbreak; allow the pain to be felt so it is released.", r: "Healing; the worst of the emotional storm has passed." },
-    { n: "Four of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Swords04.jpg", g: "Rest; take a sanctuary for mind before battle continues.", r: "Exhaustion; you are ignoring the need for rest and recovery." },
-    { n: "Five of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/2/23/Swords05.jpg", g: "Conflict; winning at any cost may leave you feeling alone.", r: "Peace; it is time to lay down the weapons and talk." },
-    { n: "Six of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/2/29/Swords06.jpg", g: "Transition; moving toward calmer waters and leaving trouble.", r: "Stuck; you are carrying too much baggage into your new path." },
-    { n: "Seven of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/3/34/Swords07.jpg", g: "Strategy; act with caution and keep your plans close.", r: "Guilt; the truth about your hidden actions is coming out." },
-    { n: "Eight of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/a/a7/Swords08.jpg", g: "Mental prison; only thing holding you back is your thoughts.", r: "Release; you are finally stepping out of the mental cage." },
-    { n: "Nine of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Swords09.jpg", g: "Anxiety; your fears are louder than reality, but can't hurt.", r: "Recovery; the darkness of mind is being replaced by light." },
-    { n: "Ten of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords10.jpg", g: "Rock bottom; the worst happened, now only path is upward.", r: "Rise; you are surviving the crisis and starting to heal." },
-    { n: "Page of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Swords11.jpg", g: "Curiosity; a sharp new perspective is ready to be shared.", r: "All talk; don't let your bluntness hurt those you love." },
-    { n: "Knight of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/b/b0/Swords12.jpg", g: "Drive; rush toward goals with focus and sharp intellect.", r: "Cruel; do not let your ambition trample over others' hearts." },
-    { n: "Queen of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords13.jpg", g: "Logic; use your independence to see the situation clearly.", r: "Cold; your logic has become a weapon rather than a tool." },
-    { n: "King of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/3/33/Swords14.jpg", g: "Mental power; speak truth with conviction and ethical clarity.", r: "Tyranny; your power is used to control others through fear." },
-    { n: "Ace of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/f/fd/Pents01.jpg", g: "Wealth; a seed is planted for long-term stable growth.", r: "Missed chance; you are failing to see the gold before you." },
-    { n: "Two of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Pents02.jpg", g: "Balance; manage resources with flexibility and steady grace.", r: "Chaos; the balls you are juggling are starting to fall." },
-    { n: "Three of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/4/42/Pents03.jpg", g: "Teamwork; your skills are recognized when you work together.", r: "Disharmony; lack of teamwork is hurting the final product." },
-    { n: "Four of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/3/35/Pents04.jpg", g: "Security; hold onto resources to build a safe future.", r: "Greed; your need for control is blocking the abundance." },
-    { n: "Five of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/9/96/Pents05.jpg", g: "Hardship; do not ignore the help being offered in darkness.", r: "Recovery; the financial or spiritual drought is ending now." },
-    { n: "Six of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Pents06.jpg", g: "Generosity; the universe rewards your balance of resources.", r: "Debt; the flow of giving and receiving is currently broken." },
-    { n: "Seven of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Pents07.jpg", g: "Patience; your long-term efforts are starting to bear fruit.", r: "Delay; you are working hard but not seeing the results yet." },
-    { n: "Eight of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/4/49/Pents08.jpg", g: "Mastery; focus on repetitive work to reach perfection.", r: "Rush; you are rushing the process and hurting the result." },
-    { n: "Nine of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Pents09.jpg", g: "Luxury; enjoy the fruits of labor in your own sanctuary.", r: "Greed; do not let your success isolate you from the world." },
-    { n: "Ten of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/3/39/Pents10.jpg", g: "Legacy; your long-term security is established for family.", r: "Loss; the stability you built is currently under threat." },
-    { n: "Page of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Pents11.jpg", g: "Opportunity; a practical new path for learning is opening.", r: "Procrastination; dreams lack the necessary practical work." },
-    { n: "Knight of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Pents12.jpg", g: "Routine; the slow, steady path is the surest to success.", r: "Stuck; your routine has become a rut rather than progress." },
-    { n: "Queen of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/8/88/Pents13.jpg", g: "Nurturing; provide for home and health with grounded energy.", r: "Deficit; providing for everyone else but ignoring yourself." },
-    { n: "King of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/1/1c/Pents14.jpg", g: "Abundance; your mastery of physical world provides safety.", r: "Stubborn; focus on money is blinding you to spiritual truth." }
-];
-
-function moon() {
-    const p = ["🌑 New", "🌒 Waxing", "🌓 First", "🌔 Gibbous", "🌕 Full", "🌖 Waning", "🌗 Last", "🌘 Crescent"];
-    const el = document.getElementById('moon');
-    if(el) el.innerText = p[new Date().getDate() % 8] + " Moon Guidance";
-}
-
-window.render = function(list) {
-    const grid = document.getElementById('grid');
-    if(!grid) return;
-    grid.innerHTML = list.map(c => `
-        <div class="tarot-card" onclick="openM('${c.n.replace(/'/g, "\\'")}')">
-            <img src="${c.img}" loading="lazy">
-            <h3 style="font-size:0.75rem; margin:5px 0; color:var(--gold);">${c.n}</h3>
-        </div>
-    `).join('');
-};
-
-window.openM = function(name, rev = false) {
-    const card = cards.find(c => c.n === name);
-    if(!card) return;
-    document.getElementById('mImg').src = card.img;
-    document.getElementById('mImg').className = rev ? 'rev' : '';
-    document.getElementById('mTitle').innerText = name + (rev ? " (Rev)" : "");
-    document.getElementById('mDesc').innerText = rev ? card.r : card.g;
-    document.getElementById('modal').style.display = 'block';
-};
-
-window.closeM = function() { document.getElementById('modal').style.display = 'none'; };
-
-window.draw = function(num) {
-    const shuffled = [...cards].sort(() => 0.5 - Math.random());
-    const picked = shuffled.slice(0, num);
-    const labels = ["Past", "Present", "Future", "Root", "Outcome"];
-    let stepHtml = "";
-    const grid = document.getElementById('grid');
-    grid.innerHTML = `<div style="grid-column:1/-1;"><button class="action-btn" onclick="location.reload()">Reset Deck</button></div>`;
-    picked.forEach((c, i) => {
-        const isR = Math.random() > 0.7;
-        const msg = isR ? c.r : c.g;
-        stepHtml += `<div class="insight-step"><span style="color:var(--gold);font-weight:bold;font-size:0.7rem;">${labels[i]}: ${c.n}</span><br>${msg}</div>`;
-        grid.innerHTML += `
-            <div class="tarot-card" onclick="openM('${c.n.replace(/'/g, "\\'")}', ${isR})">
-                <div style="font-size:0.6rem; color:var(--gold);">${labels[i]}</div>
-                <img src="${c.img}" class="${isR ? 'rev' : ''}">
-                <h3 style="font-size:0.7rem;">${c.n}</h3>
-            </div>`;
-    });
-    const summary = (picked.filter(c => !c.n.includes("of")).length > 1) ? 
-        "A reading dominated by soul-level Major Arcana forces." : 
-        "Energy grounded in the practical day-to-day work of life.";
-    grid.innerHTML += `<div class="summary-box"><h3 style="color:var(--gold);margin:0 0 10px 0;">Oracle Insight</h3>${stepHtml}<hr style="border:0;border-top:1px solid var(--gold);opacity:0.3;margin:15px 0;"><p><strong>Synthesis:</strong> ${summary} Trust your path; the universe supports your vision.</p></div>`;
-};
-
-window.filter = function() {
-    const q = document.getElementById('search').value.toLowerCase();
-    render(cards.filter(c => c.n.toLowerCase().includes(q)));
-};
-
-moon();
-render(cards);
-</script>
-</body>
-</html>
+    { n: "The Fool", img: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", g: "The Fool represents the ultimate seed of potential and the courage to begin. It is a call to trust the universe blindly.", r: "In reverse, it warns of foolishness or a refusal to see the cliff's edge before leaping.", p: "In the Past, this shows a time of reckless freedom. In the Present, a new door is opening. In the Future, expect a total reset." },
+    { n: "The Magician", img: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", g: "The Magician is the bridge between heaven and earth. You have the tools; now you must use your will.", r: "Reversed, it suggests a misuse of talent, manipulation, or a lack of mental clarity.", p: "Past skills are now serving you. Present action is required. Future success depends on your focus." },{ n: "The High Priestess", img: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg", g: "She is the guardian of the subconscious. Stillness is your greatest weapon and intuition your guide.", r: "Reversed, it reveals secrets being kept or a dangerous disconnection from your inner voice.", p: "Your past was guided by mystery. Presently, keep your counsel. In the future, look for hidden truths." },
+    { n: "The Empress", img: "https://upload.wikimedia.org/wikipedia/commons/a/af/RWS_Tarot_03_Empress.jpg", g: "The mother of all creation. She represents the birth of ideas, the beauty of nature, and total abundance.", r: "Reversed, it shows a creative block or an overbearing energy that is stifling growth.", p: "Nurturing foundations were laid. Present abundance is available. Future growth is guaranteed." },
+    { n: "The Emperor", img: "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg", g: "He is the architect of structure and stability. Lead with logic, firm boundaries, and masculine strength.", r: "Reversed, it warns of a tyrant energy or a total lack of discipline in your current affairs.", p: "A firm foundation was built. Present structure is needed. Future leadership will be required." },
+    { n: "The Hierophant", img: "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg", g: "The keeper of tradition and spiritual wisdom. Look to mentors, institutions, or established paths.", r: "Reversed, it is the card of the rebel. It is time to break the rules and find your own path.", p: "Traditional values shaped you. Presently, seek guidance. In the future, you may become the teacher." },
+    { n: "The Lovers", img: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg", g: "Harmony in union and the weight of choice. It represents the alignment of values and deep connection.", r: "Reversed, it suggests disharmony, poor choices, or a misalignment of values with a partner.", p: "A past choice defines you. Present harmony is possible. Future unions await your decision." },
+    { n: "The Chariot", img: "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg", g: "Victory through sheer force of will. You are the driver; keep the opposing horses in check.", r: "Reversed, it indicates a loss of control, aggression, or a journey that has gone off the rails.", p: "You fought hard to get here. Presently, stay driven. In the future, victory is certain if you stay focused." },
+    { n: "Strength", img: "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg", g: "True power is gentle. It is the courage to tame the lion within through compassion, not force.", r: "Reversed, it shows inner weakness, self-doubt, or a loss of temper in a delicate situation.", p: "Past struggles made you strong. Presently, be patient. In the future, you will need quiet resolve." },
+    { n: "The Hermit", img: "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg", g: "The path of introspection. Withdraw from the noise to find the light of your own truth.", r: "Reversed, it warns of isolation, loneliness, or becoming lost in your own thoughts.", p: "A period of soul-searching began. Presently, be alone. Future wisdom comes from within." },
+    { n: "Wheel of Fortune", img: "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg", g: "The cycles of fate. Change is inevitable and the wheel is turning in your favor right now.", r: "Reversed, it indicates a string of bad luck or a desperate resistance to the changes of life.", p: "The past cycle is ending. Present luck is shifting. Future destiny is in motion." },
+    { n: "Justice", img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg", g: "Truth, fairness, and the law of karma. You will receive exactly what you have put out.", r: "Reversed, it reveals unfairness, dishonesty, or a refusal to take accountability for actions.", p: "A past legal or moral issue is resolved. Presently, be honest. Future balance is coming." },
+    { n: "The Hanged Man", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg", g: "Sacrifice for perspective. Stop pushing and wait; the view from upside down is what you need.", r: "Reversed, it suggests a wasted sacrifice, stalling, or a refusal to see a new point of view.", p: "A past pause served you. Presently, let go of control. Future insights require patience." },
+    { n: "Death", img: "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg", g: "The end of a major chapter. Transformation is painful but necessary for your soul to thrive.", r: "Reversed, it shows a fear of change or a desperate clinging to a dead situation or relationship.", p: "Something died in your past. Present transition is active. Future rebirth is coming." },
+    { n: "Temperance", img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg", g: "The art of alchemy. Blend the opposites in your life to find the golden middle path of peace.", r: "Reversed, it warns of excess, clashing energies, and a lack of long-term vision.", p: "You found past balance. Presently, practice moderation. Future harmony is being built." },
+    { n: "The Devil", img: "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg", g: "The shadow self. You are chained to a material or toxic situation, but you hold the key to the lock.", r: "Reversed, it is the card of liberation. You are finally breaking free from an old addiction or fear.", p: "A past shadow haunts you. Presently, check your chains. Future release is possible." },
+    { n: "The Tower", img: "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg", g: "Sudden upheaval. The false foundations are being struck by lightning to reveal the truth.", r: "Reversed, it suggests a disaster being narrowly avoided or a fear of letting the old walls crumble.", p: "A past shock changed everything. Present chaos is temporary. Future truth will be revealed." },
+    { n: "The Star", img: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg", g: "The light after the storm. It represents hope, healing, and the renewal of the spiritual self.", r: "Reversed, it shows a lack of faith, despair, or a feeling of being disconnected from the divine.", p: "Healing began in the past. Present hope is real. Future inspiration will guide you." },
+    { n: "The Moon", img: "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg", g: "The realm of illusions. Things are not as they seem; trust your intuition to navigate the dark.", r: "Reversed, it shows a release of fear, the lift of a fog, or secrets being brought into the light.", p: "Past confusion is resolved. Present mystery remains. Future clarity will emerge." },
+    { n: "The Sun", img: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg", g: "Total success and radiant joy. You are in the spotlight and your vitality is at its peak.", r: "Reversed, it suggests a clouded joy, over-optimism, or a temporary lack of enthusiasm.", p: "A past victory fuels you. Present happiness is yours. Future success is shining." },
+    { n: "Judgement", img: "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg", g: "The final call. Forgive the past, accept your mission, and step into a higher state of being.", r: "Reversed, it warns of self-doubt, ignoring your calling, or being stuck in old judgements.", p: "A past life ended. Present calling is heard. Future absolution is coming." },
+    { n: "The World", img: "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg", g: "Completion and integration. You have traveled the full circle and reached total accomplishment.", r: "Reversed, it shows a lack of closure, delays, or a feeling that the journey isn't quite finished.", p: "A past cycle finished. Present integration is key. Future travel or success awaits." },
+    // MINOR ARCANA
+    { n: "Ace of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/1/11/Wands01.jpg", g: "A spark of fire. New inspiration and a passionate start are presenting themselves.", r: "A creative delay or a lost spark. The energy is there, but the flame is flickering.", p: "A past idea is now blooming. Present passion is high. Future starts are coming." },
+    { n: "Ace of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/3/36/Cups01.jpg", g: "A wellspring of love. Your heart is opening to a deep, new emotional experience.", r: "Repressed feelings or self-love deficiency. You must fill your own cup first.", p: "Past love shaped you. Present emotions are overflowing. Future romance is possible." },
+    { n: "Ace of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Swords01.jpg", g: "The blade of clarity. A breakthrough in thought is cutting through all confusion.", r: "Mental chaos or a sharp tongue causing pain. Information is missing or wrong.", p: "Past logic was correct. Present breakthrough is now. Future truth will be sharp." },
+    { n: "Ace of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/f/fd/Pents01.jpg", g: "The seed of wealth. A tangible opportunity for money or security is arriving.", r: "A missed financial chance or poor planning. The ground is not yet ready for the seed.", p: "A past investment pays off. Present wealth is growing. Future security is safe." },
+    { n: "Two of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/0/0f/Wands02.jpg", g: "Vision and planning. You have the world in your hands; now decide where to go.", r: "Fear of leaving the safety of home. Indecision is blocking your global expansion.", p: "Past plans led here. Present decisions are vital. Future horizons are wide." },
+    { n: "Two of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/f/f8/Cups02.jpg", g: "A soulful partnership. The perfect balance of two hearts coming together in union.", r: "A break in connection or a disharmony in a relationship. Self-love is the cure.", p: "A past bond was strong. Present union is blessed. Future partnerships will form." },
+    { n: "Two of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Swords02.jpg", g: "A stalemate. You are at a crossroads and cannot see the path forward; choose with logic.", r: "Confusion and a refusal to decide. The blindfold is off, but the fear remains.", p: "A past choice was avoided. Present block is temporary. Future clarity requires logic." },
+    { n: "Two of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Pents02.jpg", g: "Juggling priorities. Life is a dance of balance; stay flexible to keep the coins in the air.", r: "You are over-committed. The balls are falling and the waves are getting too high.", p: "Past balance was hard. Present multitasking is key. Future stability requires grace." },
+    { n: "Three of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/f/ff/Wands03.jpg", g: "Ships coming in. Your efforts are finally showing rewards on the distant horizon.", r: "Delays in results or a failure to look far enough ahead. You are playing it too safe.", p: "Past work pays off. Present foresight is needed. Future expansion is arriving." },
+    { n: "Three of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Cups03.jpg", g: "The joy of friendship. Celebrate your community and share the fruits of your spirit.", r: "Gossip or overindulgence. The party is over and the isolation is starting to set in.", p: "Past friends helped you. Present joy is shared. Future celebrations are coming." },
+    { n: "Three of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/0/02/Swords03.jpg", g: "Deep sorrow. The heart is pierced by reality; allow the tears to wash away the pain.", r: "Releasing pain. You are finally healing from a betrayal or a deep, old grief.", p: "Past pain still echoes. Present sorrow is valid. Future healing will follow." },
+    { n: "Three of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/4/42/Pents03.jpg", g: "Master craftsmanship. Collaboration and teamwork are the keys to building your legacy.", r: "A lack of teamwork or poor quality work. You are clashing with your collaborators.", p: "Past skills were built. Present teamwork is vital. Future mastery will be recognized." },
+    { n: "Four of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Wands04.jpg", g: "Homecoming. A stable foundation and a reason to celebrate with those you love most.", r: "Tension in the home or a celebration that feels hollow. The foundation is shaky.", p: "A past home was safe. Present stability is high. Future peace is coming." },
+    { n: "Four of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/3/35/Cups04.jpg", g: "Apathy. You are so focused on the empty cups that you miss the one being offered by the divine.", r: "Waking up. You are finally noticing the new opportunities and moving out of your rut.", p: "Past boredom led here. Present apathy is a choice. Future awareness will bloom." },
+    { n: "Four of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Swords04.jpg", g: "Sanctuary. Your mind is exhausted; retire to the silence to heal and find your power again.", r: "Burnout. You are ignoring the need for rest and the crash is going to be painful.", p: "A past rest served you. Present silence is needed. Future mental strength will rise." },
+    { n: "Four of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/3/35/Pents04.jpg", g: "Possessiveness. You are clinging too tightly to your coins; fear of lack is blocking your flow.", r: "Release. You are finally letting go of the need for total control and allowing abundance in.", p: "Past greed held you back. Present security is tight. Future release is required." },
+    { n: "Five of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Wands05.jpg", g: "Healthy competition. Friction is needed to sharpen your skills and test your resolve.", r: "A void of conflict or a petty fight. The competition has become toxic or exhausting.", p: "Past battles shaped you. Present friction is active. Future peace follows effort." },
+    { n: "Five of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Cups05.jpg", g: "Regret. Do not mourn the spilled wine so much that you forget the cups still standing behind you.", r: "Acceptance. You are finally turning around and seeing the path forward after a loss.", p: "Past loss remains. Present regret is a trap. Future hope is standing behind you." },
+    { n: "Five of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/2/23/Swords05.jpg", g: "A hollow victory. You won the battle but lost the war; the cost of your pride was too high.", r: "Reconciliation. The weapons are down and the conflict is being resolved through talk.", p: "Past betrayals linger. Present conflict is sharp. Future peace requires humility." },
+    { n: "Five of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/9/96/Pents05.jpg", g: "The spiritual drought. You are walking in the cold, unaware that the church light is right there.", r: "Recovery. You are finally finding the help you need and the financial hardship is lifting.", p: "Past lack shaped you. Present struggle is real. Future abundance will return." },
+    { n: "Six of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Wands06.jpg", g: "The victor's return. Public acclaim and success are yours; enjoy the praise of the crowd.", r: "Fall from grace. You are being ignored or your success has created a target on your back.", p: "Past wins fuel you. Present acclaim is high. Future fame is possible." },
+    { n: "Six of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/1/17/Cups06.jpg", g: "Pure nostalgia. Look to the innocence of your childhood for the answer to your present heart.", r: "Living in the past. You are so stuck in 'the way things were' that you are missing today.", p: "A past home calls. Present kindness is key. Future innocence will return." },
+    { n: "Six of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/2/29/Swords06.jpg", g: "Rite of passage. You are moving from the stormy waters toward the shore of peace; keep rowing.", r: "Emotional baggage. You are trying to move forward but the past is weighing down the boat.", p: "A past move saved you. Present transition is slow. Future peace is on the horizon." },
+    { n: "Six of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Pents06.jpg", g: "The flow of giving. Charity and balance; ensure the scales of resources are equal for all.", r: "Selfishness or a power struggle over money. One is giving with strings attached.", p: "Past help was vital. Present generosity is needed. Future rewards will be shared." },
+    { n: "Seven of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Wands07.jpg", g: "Defensive grit. You are on high ground; hold your position against the pressure from below.", r: "Giving up. You are overwhelmed by the competition and the guard is finally dropping.", p: "Past grit made you. Present defense is high. Future safety is earned." },
+    { n: "Seven of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/a/af/Cups07.jpg", g: "Illusion. Too many choices can be a curse; pick one path before the fog hides them all.", r: "Clarity. You are finally making a choice and the fantasy is being replaced by reality.", p: "Past dreams led here. Present confusion is deep. Future focus is required." },
+    { n: "Seven of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/3/34/Swords07.jpg", g: "The lone wolf. Strategy and secrecy are needed; do not show your hand to the group yet.", r: "Caught. The deception is being revealed and the truth is coming out in a messy way.", p: "Past secrets remain. Present strategy is key. Future truth will be told." },
+    { n: "Seven of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Pents07.jpg", g: "The harvest pause. You have planted the seeds; now wait for the fruit to ripen naturally.", r: "Lack of reward. You worked hard but the soil was poor or the timing was wrong.", p: "Past seeds were sown. Present patience is vital. Future harvest is coming." },
+    { n: "Eight of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Wands08.jpg", g: "Swift movement. Everything is happening at once; the arrows of destiny are in the air.", r: "Chaos. Speed has become a danger and the situation is spinning out of control.", p: "Past moves were fast. Present speed is high. Future travel is likely." },
+    { n: "Eight of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Cups08.jpg", g: "The walk away. You have outgrown this situation; leave the cups behind and seek the mountains.", r: "Stagnation. You are afraid to leave a hollow situation and are wasting your soul's time.", p: "A past exit was needed. Present departure is now. Future peaks await." },
+    { n: "Eight of Swords", img: "https://upload.wikimedia.org/wikipedia/commons/a/a7/Swords08.jpg", g: "Self-imposed prison. The swords surround you, but the path out is open if you just look down.", r: "Freedom. You are finally realizing that you were never truly trapped; the blindfold is off.", p: "Past limits shaped you. Present trap is mental. Future freedom is yours." },
+    { n: "Eight of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/4/49/Pents08.jpg", g: "The apprentice. Focus on the repetitive work; mastery is found in the details of the day.", r: "Shortcut. You are rushing the process and the final product is showing the flaws.", p: "Past training pays off. Present work is hard. Future mastery is certain." },
+  
