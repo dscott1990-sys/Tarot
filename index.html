@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mystic Oracle Pro</title>
+    <title>Mystic Oracle: The Living Voice</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #c5a059; --blue: #0f0c29; --text: #f5f5f5; --glass: rgba(255, 255, 255, 0.05); }
@@ -32,12 +32,12 @@
 <body>
 
 <div class="profile-section">
-    <label>Your Birth Date (For Personal Synthesis):</label><br>
+    <label>Personal Birthday for Custom Readings:</label><br>
     <input type="date" id="dob" onchange="saveDOB()">
     <div id="zodiacInfo" style="margin-top:10px; color:var(--gold); font-weight:bold;"></div>
 </div>
 
-<div id="moon">✨ Syncing celestial tides...</div>
+<div id="moon">✨ Reading the Celestial Tides...</div>
 <h1>MYSTIC ORACLE</h1>
 
 <div class="btn-container">
@@ -60,10 +60,9 @@
 
 <script>
 const cards = [
-    { n: "The Fool", img: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", g: "A fresh journey begins; trust the universe and take a leap into the unknown.", r: "Be wary of recklessness; lack of preparation may lead to a mistake." },
+    { n: "The Fool", img: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", g: "A fresh journey begins; trust the universe and take a leap into the unknown.", r: "Be wary of recklessness; lack of preparation may lead to a foolish mistake." },
     { n: "The Magician", img: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", g: "You possess all tools needed to manifest desires; take inspired action now.", r: "Your power is being misused; clarify intentions before moving forward." },
     { n: "The High Priestess", img: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg", g: "Sit in silence; your intuition holds the secret answers you seek.", r: "Ignoring your inner voice; stop looking for external validation." },
-    // NEW SOURCE FOR EMPRESS
     { n: "The Empress", img: "https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg", g: "Abundance and creativity surround you; nurture your dreams and watch them grow.", r: "Creative drought; reconnect with nature to replenish your spirit." },
     { n: "The Emperor", img: "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg", g: "Structure required; lead with logic and establish firm boundaries.", r: "Authority too rigid; avoid being overly controlling toward others." },
     { n: "The Hierophant", img: "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg", g: "Seek wisdom in tradition; following the established path provides safety.", r: "Break free from tradition; it is time to challenge the status quo." },
@@ -91,7 +90,6 @@ const cards = [
     { n: "Six of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Wands06.jpg", g: "Victory; your efforts are being recognized by those around.", r: "Private achievement; don't let lack of praise dim success." },
     { n: "Seven of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Wands07.jpg", g: "Grit; hold your ground against the challenges coming your way.", r: "Exhaustion; do not give up just as the summit is near." },
     { n: "Eight of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Wands08.jpg", g: "Sudden speed; news arriving quickly and everything is moving.", r: "Chaos; slow down before the momentum causes a crash." },
-    // NEW SOURCE FOR 9 WANDS
     { n: "Nine of Wands", img: "https://www.sacred-texts.com/tarot/pkt/img/wa09.jpg", g: "Resilience; stay strong as you finish this long cycle.", r: "Burnout; you are struggling to keep the guard up longer." },
     { n: "Ten of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Wands10.jpg", g: "Heavy burden; you are carrying a massive load nearing completion.", r: "Collapse imminent; delegate tasks before the weight breaks spirit." },
     { n: "Page of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Wands11.jpg", g: "Inspiration; follow the spark of a fresh creative idea.", r: "Idea lacks direction; don't let excitement lead to distraction." },
@@ -104,11 +102,9 @@ const cards = [
     { n: "Four of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/3/35/Cups04.jpg", g: "Apathy; don't ignore the new offers being presented now.", r: "Moving on from boredom; you are finally waking up again." },
     { n: "Five of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Cups05.jpg", g: "Regret; look behind you at the cups still standing now.", r: "Self-forgiveness; finally letting go of old, heavy sorrows." },
     { n: "Six of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/1/17/Cups06.jpg", g: "Nostalgia; reconnect with simple innocence of your past.", r: "Stuck in past; live for the future rather than memories." },
-    // NEW SOURCE FOR 7 CUPS
     { n: "Seven of Cups", img: "https://www.sacred-texts.com/tarot/pkt/img/cu07.jpg", g: "Choices; evaluate options carefully before committing to dream.", r: "Clarity returning; fog of indecision clearing from vision." },
     { n: "Eight of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Cups08.jpg", g: "Walking away; leaving behind what no longer serves soul.", r: "Stuck; you are afraid to leave the comfort of misery." },
     { n: "Nine of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/2/24/Cups09.jpg", g: "Bliss; wishes are granted through deep inner contentment.", r: "Greed; ensure success is fulfilling heart, not just ego." },
-    // NEW SOURCE FOR 10 CUPS
     { n: "Ten of Cups", img: "https://www.sacred-texts.com/tarot/pkt/img/cu10.jpg", g: "Divine love; home and family life reaching peak harmony.", r: "Disconnected; heal rift in domestic life through compassion." },
     { n: "Page of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Cups11.jpg", g: "Creative news; a message arriving to touch your heart.", r: "Doubting intuition; don't let insecurity block the message." },
     { n: "Knight of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Cups12.jpg", g: "Charm; a dreamer arrives with a poetic invitation for you.", r: "Moody; stay grounded so moods don't wash away progress." },
@@ -137,7 +133,6 @@ const cards = [
     { n: "Seven of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Pents07.jpg", g: "Patience; your long-term efforts are starting to bear fruit.", r: "Delay; you are working hard but not seeing the results yet." },
     { n: "Eight of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/4/49/Pents08.jpg", g: "Mastery; focus on repetitive work to reach perfection.", r: "Rush; you are rushing the process and hurting the result." },
     { n: "Nine of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Pents09.jpg", g: "Abundance; enjoy the fruits of labor in your own sanctuary.", r: "Greed; do not let your success isolate you from the world." },
-    // NEW SOURCE FOR 10 PENTS
     { n: "Ten of Pentacles", img: "https://www.sacred-texts.com/tarot/pkt/img/pe10.jpg", g: "Legacy; your long-term security is established for family.", r: "Loss; the stability you built is currently under threat." },
     { n: "Page of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Pents11.jpg", g: "Opportunity; a practical new path for learning is opening.", r: "Procrastination; dreams lack the necessary practical work." },
     { n: "Knight of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Pents12.jpg", g: "Hard work and productivity; the slow, steady path is the surest.", r: "Stuck; your routine has become a rut rather than progress." },
@@ -186,7 +181,7 @@ if(saved) { document.getElementById('dob').value = saved; showZodiac(saved); }
 function render(list) {
     document.getElementById('grid').innerHTML = list.map(c => `
         <div class="tarot-card" onclick="openM('${c.n.replace(/'/g, "\\'")}')">
-            <img src="${c.img}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x500/0f0c29/c5a059?text=Secret+Card'">
+            <img src="${c.img}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x500/0f0c29/c5a059?text=Oracle+Card'">
             <h3 style="font-size:0.75rem; margin:5px 0; color:var(--gold);">${c.n}</h3>
         </div>
     `).join('');
@@ -206,7 +201,7 @@ function closeM() { document.getElementById('modal').style.display = 'none'; }
 window.draw = function(num) {
     const shuffled = [...cards].sort(() => 0.5 - Math.random());
     const picked = shuffled.slice(0, num);
-    const labels = ["The Past", "The Present", "The Future", "The Root", "The Outcome"];
+    const labels = ["Past Influence", "Present Power", "Future Path", "The Root", "The Outcome"];
     let stepHtml = "";
     const grid = document.getElementById('grid');
     grid.innerHTML = `<div style="grid-column:1/-1;"><button class="action-btn" onclick="location.reload()">Reset Deck</button></div>`;
@@ -222,37 +217,69 @@ window.draw = function(num) {
             </div>`;
     });
     
-    const synthesis = generateDeepSummary(picked);
-    grid.innerHTML += `<div class="summary-box"><h3 style="color:var(--gold);margin:0 0 10px 0;">The Oracle's Insights</h3>${stepHtml}<hr style="border:0;border-top:1px solid var(--gold);opacity:0.3;margin:15px 0;"><p><strong>Personal Synthesis:</strong> ${synthesis}</p><button class="share-btn" onclick="share()">📲 Invite a Friend</button></div>`;
+    const synthesis = generateModularSynthesis(picked);
+    grid.innerHTML += `<div class="summary-box"><h3 style="color:var(--gold);margin:0 0 10px 0;">The Oracle's Synthesis</h3>${stepHtml}<hr style="border:0;border-top:1px solid var(--gold);opacity:0.3;margin:15px 0;"><p><strong>Personal Synthesis:</strong> ${synthesis}</p><button class="share-btn" onclick="share()">📲 Share App Link</button></div>`;
 }
 
-function generateDeepSummary(picked) {
+function generateModularSynthesis(picked) {
     const sign = showZodiac(localStorage.getItem('mystic_dob'));
     const majors = picked.filter(c => !c.n.includes("of")).length;
     const cups = picked.filter(c => c.n.includes("Cups")).length;
     const swords = picked.filter(c => c.n.includes("Swords")).length;
     const pents = picked.filter(c => c.n.includes("Pentacles")).length;
     const wands = picked.filter(c => c.n.includes("Wands")).length;
-
-    let narrative = "As the cards settle, a distinct narrative emerges. ";
     
+    // 1. RANDOM OPENERS
+    const openers = [
+        "The threads of fate are weaving a clear pattern for you. ",
+        "In the stillness of this draw, a truth begins to surface. ",
+        "A rare configuration of energy is appearing in your spread today. ",
+        "The cards have settled into a soulful narrative. ",
+        "A specific message has arrived from the higher self. ",
+        "The current celestial alignment brings this guidance to your door. ",
+        "Look closely; the universe is answering your unasked questions. "
+    ];
+    
+    // 2. TIME OF DAY CONTEXT
+    const hour = new Date().getHours();
+    let timeVibe = "In this moment, ";
+    if(hour < 12) timeVibe = "As the morning sun rises, your fresh perspective ";
+    else if(hour < 17) timeVibe = "In the heart of this day, your active energy ";
+    else if(hour < 21) timeVibe = "As the evening shadows lengthen, your reflection ";
+    else timeVibe = "In the deep quiet of the night, your subconscious ";
+
+    let narrative = openers[Math.floor(Math.random() * openers.length)] + timeVibe;
+
+    // 3. ZODIAC INTEGRATION
     if(sign) {
-        narrative += "As a " + sign.n + ", your " + sign.e + " nature is being called to integrate these messages. ";
-        if(sign.e == "Fire") narrative += "Channel your natural passion into the movement shown here. ";
-        if(sign.e == "Water") narrative += "Trust your deep emotional intelligence to navigate this path. ";
-        if(sign.e == "Earth") narrative += "Stay grounded and focus on the tangible steps ahead. ";
-        if(sign.e == "Air") narrative += "Use your mental clarity to organize the chaos. ";
+        const signRef = [
+            `is acting as a bridge for your ${sign.n} spirit. `,
+            `demands the attention of your ${sign.e} nature. `,
+            `is resonating deeply with your innate ${sign.n} power. `
+        ];
+        narrative += signRef[Math.floor(Math.random() * signRef.length)];
     }
 
-    if (majors >= 2) narrative += "With several Major Arcana present, you are in a season of soul-level transition. ";
-    else narrative += "Your energy is grounded in practical day-to-day rhythms. ";
+    // 4. ELEMENTAL & ARCANA LOGIC
+    if (majors >= 2) narrative += "You are currently navigating powerful, karmic shifts that are much larger than the day-to-day. ";
+    else narrative += "This reading is grounded in the practical day-to-day rhythms of life. ";
 
-    if (cups >= 2) narrative += "The dominance of Water suggests your heart and intuition are leading. ";
-    else if (swords >= 2) narrative += "The sharp Sword presence indicates a time for logical decisions. ";
-    else if (wands >= 2) narrative += "The fire of Wands shows a season of creation and drive. ";
-    else if (pents >= 2) narrative += "Pentacles indicate a focus on material safety and stability. ";
+    if (cups >= 2) narrative += "Trust your deep emotional intelligence to navigate the flood of feelings present. ";
+    else if (swords >= 2) narrative += "Use your mental clarity to organize the chaos and cut through any illusions. ";
+    else if (wands >= 2) narrative += "Channel your natural passion into the forward movement shown here. ";
+    else if (pents >= 2) narrative += "Stay grounded and focus on the tangible, practical steps ahead. ";
+    else narrative += "A perfect balance of elements suggests you are well-aligned across all areas. ";
 
-    narrative += "The universe invites you to trust the quiet whispers of your own soul.";
+    // 5. THE "VOICE" CLOSER
+    const closers = [
+        "Trust the quiet whispers of your own soul as you move forward.",
+        "The path is being paved by your intention; walk it with courage.",
+        "The magic you seek is already within you; let it ground you.",
+        "Your final path is one of alignment; believe in the unfolding.",
+        "The universe supports every choice made from a place of truth."
+    ];
+    
+    narrative += closers[Math.floor(Math.random() * closers.length)];
     return narrative;
 }
 
@@ -265,7 +292,7 @@ async function share() {
         });
     } else {
         navigator.clipboard.writeText(window.location.href);
-        alert("Link copied! Share it with your friends.");
+        alert("Link copied to clipboard!");
     }
 }
 
@@ -278,4 +305,3 @@ render(cards);
 </script>
 </body>
 </html>
-
