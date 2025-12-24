@@ -32,12 +32,12 @@
 <body>
 
 <div class="profile-section">
-    <label>Your Birth Date (For Personalized Insights):</label><br>
+    <label>Your Birth Date (For Personal Synthesis):</label><br>
     <input type="date" id="dob" onchange="saveDOB()">
     <div id="zodiacInfo" style="margin-top:10px; color:var(--gold); font-weight:bold; letter-spacing: 1px;"></div>
 </div>
 
-<div id="moon">✨ Aligning Stars...</div>
+<div id="moon">✨ Syncing celestial tides...</div>
 <h1>MYSTIC ORACLE</h1>
 
 <div class="btn-container">
@@ -59,12 +59,13 @@
 </div>
 
 <script>
-// ALL 78 CARDS WITH FIXED ROBUST IMAGE LINKS
+// ALL 78 CARDS WITH CACHE-BUSTING URLs (?v=2)
 const cards = [
     { n: "The Fool", img: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg", g: "A fresh journey begins; trust the universe and take a leap into the unknown.", r: "Be wary of recklessness; lack of preparation may lead to a mistake." },
     { n: "The Magician", img: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg", g: "You possess all tools needed to manifest desires; take inspired action now.", r: "Your power is being misused; clarify intentions before moving forward." },
     { n: "The High Priestess", img: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg", g: "Sit in silence; your intuition holds the secret answers you seek.", r: "Ignoring your inner voice; stop looking for external validation." },
-    { n: "The Empress", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/RWS_Tarot_03_Empress.jpg/300px-RWS_Tarot_03_Empress.jpg", g: "Abundance and creativity surround you; nurture your dreams and watch them grow.", r: "Creative drought; reconnect with nature to replenish your spirit." },
+    // ALTERNATE EMPRESS URL
+    { n: "The Empress", img: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Rider-Waite_Tarot_03_Empress.jpg?v=2", g: "Abundance and creativity surround you; nurture your dreams and watch them grow.", r: "Creative drought; reconnect with nature to replenish your spirit." },
     { n: "The Emperor", img: "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg", g: "Structure required; lead with logic and establish firm boundaries.", r: "Authority too rigid; avoid being overly controlling toward others." },
     { n: "The Hierophant", img: "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg", g: "Seek wisdom in tradition; following the established path provides safety.", r: "Break free from tradition; it is time to challenge the status quo." },
     { n: "The Lovers", img: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg", g: "Harmony and soul-aligning choices; follow your heart toward deep union.", r: "Values out of alignment; resolve conflict before fixing relationships." },
@@ -91,7 +92,8 @@ const cards = [
     { n: "Six of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Wands06.jpg", g: "Victory; your efforts are being recognized by those around.", r: "Private achievement; don't let lack of praise dim success." },
     { n: "Seven of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Wands07.jpg", g: "Grit; hold your ground against the challenges coming your way.", r: "Exhaustion; do not give up just as the summit is near." },
     { n: "Eight of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Wands08.jpg", g: "Sudden speed; news arriving quickly and everything is moving.", r: "Chaos; slow down before the momentum causes a crash." },
-    { n: "Nine of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Wands09.jpg/300px-Wands09.jpg", g: "Resilience; stay strong as you finish this long cycle.", r: "Burnout; you are struggling to keep the guard up longer." },
+    // ALTERNATE 9 WANDS URL
+    { n: "Nine of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Rider-Waite_Tarot_Wands_09.jpg?v=2", g: "Resilience; stay strong as you finish this long cycle.", r: "Burnout; you are struggling to keep the guard up longer." },
     { n: "Ten of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/0/0b/Wands10.jpg", g: "Heavy burden; you are carrying a massive load nearing completion.", r: "Collapse imminent; delegate tasks before the weight breaks spirit." },
     { n: "Page of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Wands11.jpg", g: "Inspiration; follow the spark of a fresh creative idea.", r: "Idea lacks direction; don't let excitement lead to distraction." },
     { n: "Knight of Wands", img: "https://upload.wikimedia.org/wikipedia/commons/1/16/Wands12.jpg", g: "Action; chase passions with fearless energy and bold moves.", r: "Impulsive; slow down before restless energy causes a mistake." },
@@ -103,10 +105,12 @@ const cards = [
     { n: "Four of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/3/35/Cups04.jpg", g: "Apathy; don't ignore the new offers being presented now.", r: "Moving on from boredom; you are finally waking up again." },
     { n: "Five of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Cups05.jpg", g: "Regret; look behind you at the cups still standing now.", r: "Self-forgiveness; finally letting go of old, heavy sorrows." },
     { n: "Six of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/1/17/Cups06.jpg", g: "Nostalgia; reconnect with simple innocence of your past.", r: "Stuck in past; live for the future rather than memories." },
-    { n: "Seven of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Cups07.jpg/300px-Cups07.jpg", g: "Choices; evaluate options carefully before committing to dream.", r: "Clarity returning; fog of indecision clearing from vision." },
+    // ALTERNATE 7 CUPS URL
+    { n: "Seven of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Rider-Waite_Tarot_Cups_07.jpg?v=2", g: "Choices; evaluate options carefully before committing to dream.", r: "Clarity returning; fog of indecision clearing from vision." },
     { n: "Eight of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/6/60/Cups08.jpg", g: "Walking away; leaving behind what no longer serves soul.", r: "Stuck; you are afraid to leave the comfort of misery." },
     { n: "Nine of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/2/24/Cups09.jpg", g: "Bliss; wishes are granted through deep inner contentment.", r: "Greed; ensure success is fulfilling heart, not just ego." },
-    { n: "Ten of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Cups10.jpg/300px-Cups10.jpg", g: "Divine love; home and family life reaching peak harmony.", r: "Disconnected; heal rift in domestic life through compassion." },
+    // ALTERNATE 10 CUPS URL
+    { n: "Ten of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/5/55/Rider-Waite_Tarot_Cups_10.jpg?v=2", g: "Divine love; home and family life reaching peak harmony.", r: "Disconnected; heal rift in domestic life through compassion." },
     { n: "Page of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Cups11.jpg", g: "Creative news; a message arriving to touch your heart.", r: "Doubting intuition; don't let insecurity block the message." },
     { n: "Knight of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Cups12.jpg", g: "Charm; a dreamer arrives with a poetic invitation for you.", r: "Moody; stay grounded so moods don't wash away progress." },
     { n: "Queen of Cups", img: "https://upload.wikimedia.org/wikipedia/commons/6/62/Cups13.jpg", g: "Compassion; nurture yourself and others with kind spirit.", r: "Insecurity; take time to fill own cup before helping others." },
@@ -134,7 +138,8 @@ const cards = [
     { n: "Seven of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Pents07.jpg", g: "Patience; your long-term efforts are starting to bear fruit.", r: "Delay; you are working hard but not seeing the results yet." },
     { n: "Eight of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/4/49/Pents08.jpg", g: "Mastery; focus on repetitive work to reach perfection.", r: "Rush; you are rushing the process and hurting the result." },
     { n: "Nine of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Pents09.jpg", g: "Abundance; enjoy the fruits of labor in your own sanctuary.", r: "Greed; do not let your success isolate you from the world." },
-    { n: "Ten of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Pents10.jpg/300px-Pents10.jpg", g: "Legacy; your long-term security is established for family.", r: "Loss; the stability you built is currently under threat." },
+    // ALTERNATE 10 PENTS URL
+    { n: "Ten of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/4/42/Rider-Waite_Tarot_Pentacles_10.jpg?v=2", g: "Legacy; your long-term security is established for family.", r: "Loss; the stability you built is currently under threat." },
     { n: "Page of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/e/ec/Pents11.jpg", g: "Opportunity; a practical new path for learning is opening.", r: "Procrastination; dreams lack the necessary practical work." },
     { n: "Knight of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Pents12.jpg", g: "Hard work and productivity; the slow, steady path is the surest.", r: "Stuck; your routine has become a rut rather than progress." },
     { n: "Queen of Pentacles", img: "https://upload.wikimedia.org/wikipedia/commons/8/88/Pents13.jpg", g: "Nurturing; provide for home and health with grounded energy.", r: "Deficit; providing for everyone else but ignoring yourself." },
